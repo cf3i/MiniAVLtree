@@ -2,27 +2,15 @@
 
 ## 当前状态
 
-- 任务名称：为 AVL 树新增 HTML 可视化页面
-- issue_id：`2-html-avl-visualizer`
-- 开始日期：2026-03-29
-- 当前阶段：Stage 2 已规划，准备进入 Stage 3
-- 当前 issue 测试脚本：`issue_test/2-html-avl-visualizer.sh`
-- 历史回归基线命令：`bash scripts/run_issue_tests.sh --exclude issue_test/2-html-avl-visualizer.sh`
-- 完整回归命令：`bash scripts/run_issue_tests.sh`
+- 当前无进行中的 issue。
+- 开始新任务时，再由 agent 或人类将本文件改写为具体任务计划，并先创建 `issue_test/<issue_id>.sh`。
 
-## 风险提示
+## 启动新任务时需要补充
 
-- 该任务把项目从纯命令行示例扩展到静态浏览器可视化，已同步更新 `docs/overview.md` 并记录决策。
-- 新增前端逻辑不能破坏现有 `AVLTree.cpp` 的命令行示例，也不应要求引入额外构建系统。
-
-## 执行步骤
-
-- [x] 运行历史 issue 回归基线：`bash scripts/run_issue_tests.sh --exclude issue_test/2-html-avl-visualizer.sh`
-- [x] 运行当前 issue 测试脚本，确认仓库当前还没有 HTML 可视化交付物：`bash issue_test/2-html-avl-visualizer.sh`
-- [x] 新增 `web/avl-visualizer.html` 与 `web/avl-visualizer.js`，支持输入整数序列并渲染 AVL 树结构
-- [x] 在页面中展示插入序列、中序遍历、前序遍历和错误提示
-- [x] 根据新增 `web/` 模块更新相关项目文档
-- [x] 运行完整回归：`bash scripts/run_issue_tests.sh`
+1. 任务名称、来源 issue、开始日期、状态
+2. 当前 issue 对应的测试脚本路径与覆盖目标
+3. 可逐步勾选的执行步骤
+4. 对应的验证记录（至少包含历史回归基线和完整回归结果）
 
 ## 维护说明
 

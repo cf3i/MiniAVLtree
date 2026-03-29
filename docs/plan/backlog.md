@@ -71,7 +71,7 @@
 
 ## P0（最高优先级）
 
-- [ ] 为 AVL 树新增 HTML 可视化页面（目标：在浏览器中输入整数序列并看到 AVL 树结构与遍历结果；范围：新增静态 HTML/JS 页面，不改变现有 `AVLTree.cpp` 命令行入口；验收：打开页面后可渲染 AVL 树节点与连线，并显示中序/前序遍历结果；来源：用户需求，用真实仓库验证 workflow 自动 merge）
+- [x] 为 AVL 树新增 HTML 可视化页面（目标：在浏览器中输入整数序列并看到 AVL 树结构与遍历结果；范围：新增静态 HTML/JS 页面，不改变现有 `AVLTree.cpp` 命令行入口；验收：打开页面后可渲染 AVL 树节点与连线，并显示中序/前序遍历结果；来源：用户需求，用真实仓库验证 workflow 自动 merge）
 - [ ] 处理 `AVLtree::remove(int val)` 与 `AVLtree::__remove(node*, int)` 仅声明未定义的问题，避免删除接口被调用时发生链接失败（来自 `docs/progress.md:29` 的已知问题）
 
 ## P1
