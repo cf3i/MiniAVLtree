@@ -25,4 +25,9 @@
 
 ## 反模式记录
 
-（暂无，由 Stage 5 Reflection 逐步积累）
+## A-001 在 shell 参数里内联带反引号的 PR Markdown
+
+- 来源：`1-html-avl-visualizer`
+- 失败信号（早期症状）：运行 `gh pr create --body "..."` 时，shell 报出与 Markdown 代码片段无关的 `permission denied`、`command not found` 或意外命令执行。
+- 根本原因：反引号在 shell 中会触发命令替换；把 Markdown 代码片段原样塞进双引号参数，shell 会先解释反引号，再把结果传给 `gh`。
+- 正确替代做法：改用 `--body-file`、单引号包裹、或 here-doc 先生成正文文件，再调用 `gh pr create`。
