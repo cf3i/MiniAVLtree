@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AVL Tree Visualizer</title>
+    <style>
+      :root {
+        --ink: #203629;
+        --ink-soft: #4b5f53;
+        --sand: #fef7e8;
+        --sage: #d7e2d2;
+        --sage-deep: #9fb59d;
+        --accent: #d47b4a;
+        --error: #8f2d19;
+        --paper: #fbf7ef;
+        --grid: rgba(32, 54, 41, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(212, 123, 74, 0.18), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(159, 181, 157, 0.24), transparent 26%),
+          linear-gradient(160deg, #f7f2e5 0%, #edf1e6 100%);
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 32px));
+        margin: 32px auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      .hero,
+      .panel,
+      .canvas {
+        background: rgba(251, 247, 239, 0.86);
+        border: 1px solid rgba(32, 54, 41, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 18px 40px rgba(32, 54, 41, 0.08);
+        backdrop-filter: blur(10px);
+      }
+
+      .hero {
+        padding: 28px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(159, 181, 157, 0.2);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(2.2rem, 5vw, 4.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+        max-width: 9ch;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 72ch;
+        color: var(--ink-soft);
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+        gap: 24px;
+      }
+
+      .panel {
+        padding: 24px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .panel h2,
+      .canvas h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      label {
+        display: grid;
+        gap: 10px;
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+      }
+
+      textarea {
+        min-height: 160px;
+        resize: vertical;
+        border: 1px solid rgba(32, 54, 41, 0.18);
+        border-radius: 18px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.75);
+        color: var(--ink);
+        font: inherit;
+        line-height: 1.5;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 140ms ease, box-shadow 140ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(32, 54, 41, 0.12);
+      }
+
+      .primary {
+        background: var(--ink);
+        color: white;
+      }
+
+      .secondary {
+        background: rgba(159, 181, 157, 0.24);
+        color: var(--ink);
+      }
+
+      .ghost {
+        background: rgba(212, 123, 74, 0.18);
+        color: var(--ink);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .stat {
+        padding: 14px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(215, 226, 210, 0.55), rgba(255, 255, 255, 0.72));
+        border: 1px solid rgba(32, 54, 41, 0.08);
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+
+      .stat span {
+        display: block;
+        margin-top: 8px;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+
+      .output {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.66);
+        border: 1px solid rgba(32, 54, 41, 0.08);
+      }
+
+      .output strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+
+      .output code {
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: "SFMono-Regular", "Menlo", monospace;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .error {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(143, 45, 25, 0.08);
+        border: 1px solid rgba(143, 45, 25, 0.14);
+        color: var(--error);
+      }
+
+      .canvas {
+        padding: 24px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .canvas-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: baseline;
+      }
+
+      .canvas-head p {
+        margin: 0;
+        color: var(--ink-soft);
+      }
+
+      .svg-wrap {
+        min-height: 540px;
+        border-radius: 22px;
+        overflow: auto;
+        border: 1px solid rgba(32, 54, 41, 0.1);
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(244, 248, 241, 0.96));
+        background-size: 32px 32px, 32px 32px, auto;
+      }
+
+      #tree-svg {
+        display: block;
+        width: 100%;
+        min-height: 540px;
+      }
+
+      @media (max-width: 920px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 18px, 100%);
+          margin: 12px auto 18px;
+        }
+
+        .hero,
+        .panel,
+        .canvas {
+          border-radius: 22px;
+          padding: 18px;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .canvas-head {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <span class="eyebrow">AVL Tree Visualizer</span>
+        <h1>Watch each insert rebalance the tree.</h1>
+        <p>
+          输入用空格、逗号或换行分隔的整数，页面会用静态 SVG 画出 AVL 树结构，并同步给出节点数、高度、
+          中序遍历和前序遍历，方便快速检查旋转结果。
+        </p>
+      </section>
+
+      <section class="layout">
+        <aside class="panel">
+          <h2>Input</h2>
+          <label for="sequence-input">
+            Integer sequence
+            <textarea id="sequence-input">10 20 30 40 50 25</textarea>
+          </label>
+
+          <div class="actions">
+            <button id="render-button" class="primary" type="button">Render Tree</button>
+            <button id="sample-button" class="secondary" type="button">Load Sample</button>
+            <button id="reset-button" class="ghost" type="button">Clear</button>
+          </div>
+
+          <div id="error-banner" class="error" hidden></div>
+
+          <div class="stats">
+            <div class="stat">
+              <strong>Input Sequence</strong>
+              <span id="sequence-output">10, 20, 30, 40, 50, 25</span>
+            </div>
+            <div class="stat">
+              <strong>Node Count</strong>
+              <span id="node-count">0</span>
+            </div>
+            <div class="stat">
+              <strong>Tree Height</strong>
+              <span id="tree-height">0</span>
+            </div>
+            <div class="stat">
+              <strong>Duplicate Policy</strong>
+              <span>Ignore duplicate values</span>
+            </div>
+          </div>
+
+          <div class="output">
+            <strong>In-order Traversal</strong>
+            <code id="inorder-output">（空）</code>
+          </div>
+
+          <div class="output">
+            <strong>Pre-order Traversal</strong>
+            <code id="preorder-output">（空）</code>
+          </div>
+        </aside>
+
+        <section class="canvas">
+          <div class="canvas-head">
+            <div>
+              <h2>Tree Canvas</h2>
+              <p>节点下方展示 `h` 和 `bf`，便于观察平衡结果。</p>
+            </div>
+          </div>
+          <div class="svg-wrap">
+            <svg id="tree-svg" role="img" aria-label="AVL tree visualization"></svg>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./avl-visualizer.js"></script>
+  </body>
+</html>
