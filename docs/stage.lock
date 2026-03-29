@@ -1,6 +1,6 @@
-current: stage6
-status: in_progress
-previous: stage5
+current: stage1
+status: done
+previous: stage6
 meta:
-  issue_id: "1-html-avl-visualizer"
+  issue_id: null
   code_changed: null
