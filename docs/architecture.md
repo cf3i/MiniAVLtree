@@ -9,6 +9,7 @@
 | 层级 | 职责 | 允许依赖 | 禁止依赖 |
 | --- | --- | --- | --- |
 | `根目录源码` | `AVLTree.cpp` 同时承载 AVL 树数据结构、操作实现和 `main` 入口，当前是单翻译单元实现 | C++ 标准库头文件（当前可确认仅 `#include <iostream>`） | 当前未配置 |
+| `web/` | 静态前端可视化页面，负责输入整数、构建 AVL 树并用 SVG 渲染树结构 | 浏览器 DOM API、同目录 JavaScript 模块 | 当前未配置 |
 | `scripts/` | 仓库辅助脚本，负责 workflow 上下文组装和 issue 回归脚本调度 | Python 标准库、`yaml`、shell 命令，以及 `docs/`、`issue_test/` 下的文件路径 | 当前未配置 |
 | `issue_test/` | issue 级回归脚本目录；当前只有 `README.md` 约定，未发现实际 `.sh` 回归脚本 | Bash 脚本和项目可执行命令（按 README 约定） | 当前未配置 |
 | `docs/` | workflow 和仓库说明文档，不承载可 import 的业务代码 | 无项目内代码依赖 | 不适用 |
@@ -23,9 +24,12 @@
 │   └── workflow/            # stage1-stage6 工作流说明
 ├── issue_test/              # issue 回归测试目录；当前只有 README 约定
 │   └── README.md            # issue_test 的命名、契约和执行方式
-└── scripts/                 # 自动化辅助脚本
-    ├── build_context.py     # 按 stage 解析需要加载的文档列表
-    └── run_issue_tests.sh   # 统一执行 issue_test/*.sh
+├── scripts/                 # 自动化辅助脚本
+│   ├── build_context.py     # 按 stage 解析需要加载的文档列表
+│   └── run_issue_tests.sh   # 统一执行 issue_test/*.sh
+└── web/                     # 静态可视化页面
+    ├── avl-visualizer.html  # 浏览器入口页面
+    └── avl-visualizer.js    # AVL 构建、布局与 SVG 渲染逻辑
 ```
 
 ## Import Boundary 规则
@@ -33,7 +37,9 @@
 1. `AVLTree.cpp` 可以 include C++ 标准库头文件；当前未发现任何项目内头文件或其他 C++ 模块依赖。
 2. `scripts/build_context.py` 可以 import `argparse`、`os`、`sys`、`yaml`；当前未发现它 import 仓库内其他 Python 模块。
 3. `scripts/run_issue_tests.sh` 当前不 source 项目内其他脚本；它只遍历并执行 `issue_test/*.sh`。
-4. 项目级“谁禁止 import 谁”的机械边界规则当前未配置；仓库内未发现用于校验 import boundary 的 lint 或 CI 配置。
+4. `web/avl-visualizer.html` 只加载同目录 `avl-visualizer.js`，当前未引入第三方 CDN、构建产物或外部依赖。
+5. `web/avl-visualizer.js` 当前设计为浏览器 / Node 复用模块，不依赖仓库内其他源码文件。
+6. 项目级“谁禁止 import 谁”的机械边界规则当前未配置；仓库内未发现用于校验 import boundary 的 lint 或 CI 配置。
 
 ## 执行方式
 
