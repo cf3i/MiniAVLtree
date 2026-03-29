@@ -25,4 +25,9 @@
 
 ## 反模式记录
 
-（暂无，由 Stage 5 Reflection 逐步积累）
+## A-001 不要把 `gh --jq` 的带引号表达式直接嵌进 shell 的双引号命令替换里
+
+- 来源：`2-html-avl-visualizer`
+- 失败信号（早期症状）：PR 创建或 merge 动作已经成功，但脚本额外输出 `failed to parse jq expression`，问题通常出现在 `\"\"` 之类的手工转义片段附近。
+- 根本原因：shell 双引号、命令替换和 `gh --jq` 表达式三层引号叠在一起后，极易发生过度转义或错误截断，导致 GitHub CLI 在输出元数据阶段解析失败。
+- 正确替代做法：先把 `gh pr view --jq ...` 的结果读到局部变量，再单独输出 `KEY=$value`；不要在 `echo "KEY=$( ... )"` 里直接拼复杂 jq 表达式。
